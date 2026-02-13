@@ -71,20 +71,12 @@ func connectToDB() *sql.DB {
 	for {
 		connection, err := openDB(dsn)
 		if err != nil {
-			log.Println("Postgres not yet ready...")
-			counts++
-		} else {
-			log.Println("Connected to postgres!")
-			return connection
+			log.Println("Postgres not yet ready... - retrying in 2s")
+			time.Sleep(2 * time.Second)
+			continue
 		}
 
-		if counts > 10 {
-			log.Println(err)
-			return nil
-		}
-
-		log.Println("Backing off for two seconds....")
-		time.Sleep(2 * time.Second)
-		continue
+		log.Println("Connected to postgres!")
+		return connection
 	}
 }
